@@ -84,19 +84,19 @@ style.configure('TLabel', font=('Arial', 12))
 style.configure('TButton', font=('Arial', 12), padding=10)
 style.configure('TEntry', font=('Arial', 12))
 
-label_total_rooms = ttk.Label(root, text="Ingrese el número total de habitaciones:")
+label_total_rooms = ttk.Label(root, text="Ingrese el número total de habitaciones (por bloque):")
 label_total_rooms.pack(pady=5)
 
 entry_total_rooms = ttk.Entry(root)
 entry_total_rooms.pack(pady=5)
 
-label_total_bedrooms = ttk.Label(root, text="Ingrese el número total de dormitorios:")
+label_total_bedrooms = ttk.Label(root, text="Ingrese el número total de dormitorios (por bloque):")
 label_total_bedrooms.pack(pady=5)
 
 entry_total_bedrooms = ttk.Entry(root)
 entry_total_bedrooms.pack(pady=5)
 
-label_households = ttk.Label(root, text="Ingrese el número de hogares:")
+label_households = ttk.Label(root, text="Ingrese el número de hogares (por bloque):")
 label_households.pack(pady=5)
 
 entry_households = ttk.Entry(root)
