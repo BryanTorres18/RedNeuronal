@@ -7,23 +7,29 @@ import seaborn as sns
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from tensorflow.keras.callbacks import EarlyStopping
 
-# Paso 1: Cargar y Preprocesar los Datos
+# Cargar el dataset
 data = pd.read_csv('Dataset/housing.csv')
 
 # Manejar valores faltantes
 data.dropna(inplace=True)
 
-# Normalizar características
+# Seleccionar características y objetivo
 features = data[['longitude', 'latitude', 'housing_median_age', 'total_rooms', 'total_bedrooms',
                  'population', 'households', 'median_income']]
 target = data['median_house_value']
 
-from sklearn.preprocessing import StandardScaler
+# Normalizar características
 scaler = StandardScaler()
 features = scaler.fit_transform(features)
 
-# Paso 2: Crear y Entrenar una Red Neuronal con Keras
+# Dividir los datos en entrenamiento y validación
+X_train, X_val, y_train, y_val = train_test_split(features, target, test_size=0.2, random_state=42)
+
+# Crear el modelo de red neuronal
 model = Sequential([
     Dense(128, activation='relu', input_shape=(features.shape[1],)),
     Dense(64, activation='relu'),
@@ -32,7 +38,14 @@ model = Sequential([
 ])
 
 model.compile(optimizer='adam', loss='mse')
-model.fit(features, target, epochs=200, validation_split=0.2)
+
+early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+
+# Entrenar el modelo con early stopping
+history = model.fit(X_train, y_train, epochs=300, validation_data=(X_val, y_val), callbacks=[early_stopping])
+
+# Realizar predicciones en el conjunto de validación
+y_pred = model.predict(X_val)
 
 # Función para predecir el precio de la vivienda basado en características específicas
 def predict_price(longitude, latitude, housing_median_age, total_rooms, total_bedrooms, population, households, median_income):
@@ -51,7 +64,6 @@ def create_heatmap():
     plt.title('Mapa de Calor de Precios de Viviendas en California')
     plt.show()
 
-# Paso 3: Crear la Interfaz Gráfica con Tkinter
 def show_prediction():
     try:
         total_rooms = float(entry_total_rooms.get())
@@ -70,11 +82,9 @@ def show_prediction():
     except ValueError:
         messagebox.showerror("Entrada no válida", "Por favor, ingrese valores numéricos válidos para todos los campos.")
 
-# Crear la ventana principal
 root = tk.Tk()
 root.title("Predicción de Precios de Viviendas en California")
 
-# Configurar estilos
 style = ttk.Style()
 style.configure('TLabel', font=('Arial', 12))
 style.configure('TButton', font=('Arial', 12), padding=10)
@@ -111,6 +121,6 @@ button_predict.pack(pady=20)
 button_heatmap = ttk.Button(root, text="Mostrar Mapa de Calor", command=create_heatmap)
 button_heatmap.pack(pady=10)
 
-# Ejecutar la aplicación
 root.mainloop()
+
 
