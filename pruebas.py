@@ -9,17 +9,15 @@ from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, f
 import seaborn as sns
 from tensorflow.keras.callbacks import EarlyStopping
 
-# Cargar el dataset
+
 data = pd.read_csv('Dataset/housing.csv')
 
-# Manejar valores faltantes
 data.dropna(inplace=True)
 
 features = data[['longitude', 'latitude', 'housing_median_age', 'total_rooms', 'total_bedrooms',
                  'population', 'households', 'median_income']]
 target = data['median_house_value']
 
-# Normalizamos las características
 scaler = StandardScaler()
 features = scaler.fit_transform(features)
 
@@ -52,7 +50,6 @@ plt.legend()
 plt.title('Pérdida de Entrenamiento y Validación')
 plt.show()
 
-# Realiza las predicciones en el conjunto de validación
 y_pred = model.predict(X_val)
 
 # Binarizar las predicciones para la matriz de confusión y F1 Score
@@ -69,7 +66,6 @@ plt.ylabel('Actual')
 plt.title('Matriz de Confusión')
 plt.show()
 
-# F1 Score, accuracy y precisión
 f1 = f1_score(y_val_bin, y_pred_bin)
 accuracy = accuracy_score(y_val_bin, y_pred_bin)
 precision = precision_score(y_val_bin, y_pred_bin)
